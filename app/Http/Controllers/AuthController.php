@@ -17,7 +17,15 @@ class AuthController extends Controller
     *      description="SignIn",
     *      @AO\Parameter(
     *            name="email",
-    *            in="query",
+    *            in="body",
+    *            required=true,
+    *            @OA\Schema(
+    *                type="string"
+    *            )
+    *      ),
+    *       @AO\Parameter(
+    *            name="password",
+    *            in="body",
     *            required=true,
     *            @OA\Schema(
     *                type="string"

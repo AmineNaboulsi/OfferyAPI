@@ -8,24 +8,35 @@ use App\Http\Requests\UpdateOfferRequest;
 
 class OfferController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+     /**
+    * @OA\GET(
+    *      path="/offers",
+    *      summary="Offres",
+    *      description="get all offres",
+    *      tags={"Auth"},
+    *      @OA\Response(response="200", description="get all offres"),
+    *      @OA\Response(response="404", description="No offers found"),
+    * )
+    */
     public function index()
     {
-        return "test";
         $offers = Offer::with('user')->latest()->get();
-        return response()->json([
-            'status' => true,
-            'data' => $offers
-        ]);
+        return response()->json($offers);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+     /**
+    * @OA\POST(
+    *      path="/offers",
+    *      summary="Offres",
+    *      description="get all offres",
+    *      tags={"Auth"},
+    *      @OA\Response(response="200", description="get all offres"),
+    *      @OA\Response(response="404", description="No offers found"),
+    * )
+    */
     public function store(StoreOfferRequest $request)
     {
+        //['full-time', 'part-time', 'contract', 'freelance', 'internship']
         try{
             $request->validate([
                 'title' => 'required|string|max:255',
@@ -34,10 +45,9 @@ class OfferController extends Controller
                 'company_name' => 'required|string|max:255',
                 'salary' => 'required|numeric|min:0',
                 'job_type' => 'required|string|max:255',
-                'deadline' => 'required|date|after:today',
+                'deadline' => 'required|date_format:d-m-Y|after:today',
                 'is_active' => 'boolean',
             ]);
-            
             $offer = Offer::create([
                 'title' => $request->title,
                 'description' => $request->description,
@@ -45,7 +55,7 @@ class OfferController extends Controller
                 'company_name' => $request->company_name,
                 'salary' => $request->salary,
                 'job_type' => $request->job_type,
-                'deadline' => $request->deadline,
+                'deadline' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->deadline)->format('Y-m-d'),
                 'is_active' => $request->is_active ?? true,
                 'user_id' => auth()->id(),
             ]);
@@ -79,7 +89,6 @@ class OfferController extends Controller
      */
     public function update(UpdateOfferRequest $request, Offer $offer)
     {
-        // Check if user owns the offer
         if ($offer->user_id !== auth()->id()) {
             return response()->json([
                 'status' => false,
