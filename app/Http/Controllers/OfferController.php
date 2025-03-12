@@ -10,12 +10,12 @@ class OfferController extends Controller
 {
      /**
     * @OA\GET(
-    *      path="/offers",
+    *      path="/api/offers",
     *      summary="Offres",
     *      description="get all offres",
-    *      tags={"Auth"},
+    *      tags={"Offer"},
     *      @OA\Response(response="200", description="get all offres"),
-    *      @OA\Response(response="404", description="No offers found"),
+    *      @OA\Response(response="403", description="Unauthenticated"),
     * )
     */
     public function index()
@@ -24,29 +24,39 @@ class OfferController extends Controller
         return response()->json($offers);
     }
 
-     /**
+    /**
     * @OA\POST(
-    *      path="/offers",
-    *      summary="Offres",
-    *      description="get all offres",
-    *      tags={"Auth"},
-    *      @OA\Response(response="200", description="get all offres"),
-    *      @OA\Response(response="404", description="No offers found"),
+    *      path="/api/offers",
+    *      summary="Add Offer",
+    *      description="Add new offer",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\JsonContent(
+    *              @OA\Property(property="title", type="string"),
+    *              @OA\Property(property="description", type="string"),
+    *              @OA\Property(property="location", type="string"),
+    *              @OA\Property(property="company_name", type="string"),
+    *              @OA\Property(property="salary", type="number"),
+    *              @OA\Property(property="job_type", type="string"),
+    *              @OA\Property(property="deadline", type="string", format="date"),
+    *          )
+    *      ),
+    *      security={{"bearerAuth":{}}},
+    *      tags={"Offer"},
+    *      @OA\Response(response="201", description="Offer Added successfully"),
+    *      @OA\Response(response="403", description="Unauthenticated"),
     * )
     */
     public function store(StoreOfferRequest $request)
     {
-        //['full-time', 'part-time', 'contract', 'freelance', 'internship']
         try{
             $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'location' => 'required|string|max:255',
                 'company_name' => 'required|string|max:255',
-                'salary' => 'required|numeric|min:0',
-                'job_type' => 'required|string|max:255',
+                'job_type' => ['in:full-time,part-time,contract,freelance,internship'],
                 'deadline' => 'required|date_format:d-m-Y|after:today',
-                'is_active' => 'boolean',
             ]);
             $offer = Offer::create([
                 'title' => $request->title,
@@ -56,10 +66,10 @@ class OfferController extends Controller
                 'salary' => $request->salary,
                 'job_type' => $request->job_type,
                 'deadline' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->deadline)->format('Y-m-d'),
-                'is_active' => $request->is_active ?? true,
+                'is_active' => true,
                 'user_id' => auth()->id(),
             ]);
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'Offer created successfully',
@@ -73,20 +83,31 @@ class OfferController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Offer $offer)
-    {
-        return response()->json([
-            'status' => true,
-            'data' => $offer->load('user')
-        ]);
-    }
+
 
     /**
-     * Update the specified resource in storage.
-     */
+    * @OA\PUT(
+    *      path="/api/offers/{id}",
+    *      summary="Update Offer",
+    *      description="Update an existing offer",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\JsonContent(
+    *              @OA\Property(property="title", type="string"),
+    *              @OA\Property(property="description", type="string"),
+    *              @OA\Property(property="location", type="string"),
+    *              @OA\Property(property="company_name", type="string"),
+    *              @OA\Property(property="salary", type="number"),
+    *              @OA\Property(property="job_type", type="string"),
+    *              @OA\Property(property="deadline", type="string", format="date"),
+    *              @OA\Property(property="is_active", type="boolean")
+    *          )
+    *      ),
+    *      tags={"Offer"},
+    *      @OA\Response(response="200", description="Offer updated successfully"),
+    *      @OA\Response(response="422", description="Validation errors")
+    * )
+    */
     public function update(UpdateOfferRequest $request, Offer $offer)
     {
         if ($offer->user_id !== auth()->id()) {
@@ -115,11 +136,18 @@ class OfferController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+    * @OA\POST(
+    *      path="/api/offers/{id}",
+    *      summary="Add Offer",
+    *      description="Add new offer",
+    *      security={{"bearerAuth":{}}},
+    *      tags={"Offer"},
+    *      @OA\Response(response="200", description="Offer deletedy"),
+    *      @OA\Response(response="422", description="Validation errors")
+    * )
+    */
     public function destroy(Offer $offer)
     {
-        // Check if user owns the offer
         if ($offer->user_id !== auth()->id()) {
             return response()->json([
                 'status' => false,

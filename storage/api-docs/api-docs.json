@@ -13,6 +13,24 @@
                 "summary": "SignIn",
                 "description": "SignIn",
                 "operationId": "7d193e3488af5b704a1a5532bac21eee",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "login successfuly"
@@ -31,6 +49,27 @@
                 "summary": "Register",
                 "description": "Register a new user",
                 "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "User registered successfully"
@@ -40,12 +79,165 @@
                     }
                 }
             }
+        },
+        "/api/offers": {
+            "get": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Offres",
+                "description": "get all offres",
+                "operationId": "3a56496f000faffd87f42c4036770f0e",
+                "responses": {
+                    "200": {
+                        "description": "get all offres"
+                    },
+                    "403": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Add Offer",
+                "description": "Add new offer",
+                "operationId": "4b4cc5dac461b7ed0b8d56a8a2ce22d2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "company_name": {
+                                        "type": "string"
+                                    },
+                                    "salary": {
+                                        "type": "number"
+                                    },
+                                    "job_type": {
+                                        "type": "string"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Offer Added successfully"
+                    },
+                    "403": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/offers/{id}": {
+            "put": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Update Offer",
+                "description": "Update an existing offer",
+                "operationId": "a5552a66b47ed29fe310349a358ada20",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "company_name": {
+                                        "type": "string"
+                                    },
+                                    "salary": {
+                                        "type": "number"
+                                    },
+                                    "job_type": {
+                                        "type": "string"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Offer updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Add Offer",
+                "description": "Add new offer",
+                "operationId": "03745dcbedf06d5e67eeb92175cde1ab",
+                "responses": {
+                    "200": {
+                        "description": "Offer deletedy"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Offer",
+            "description": "Offer"
         }
     ]
 }

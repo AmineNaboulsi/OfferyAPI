@@ -15,24 +15,14 @@ class AuthController extends Controller
     *      path="/login",
     *      summary="SignIn",
     *      description="SignIn",
-    *      @AO\Parameter(
-    *            name="email",
-    *            in="body",
-    *            required=true,
-    *            @OA\Schema(
-    *                type="string"
-    *            )
-    *      ),
-    *       @AO\Parameter(
-    *            name="password",
-    *            in="body",
-    *            required=true,
-    *            @OA\Schema(
-    *                type="string"
-    *            )
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\JsonContent(
+    *              @OA\Property(property="email", type="string"),
+    *              @OA\Property(property="password", type="string"),
+    *          )
     *      ),
     *      tags={"Auth"},
-    *      @OA\Info(),
     *      @OA\Response(response="200", description="login successfuly"),
     *      @OA\Response(response="404", description="Account not found"),
     * )
@@ -45,12 +35,12 @@ class AuthController extends Controller
           ]);
 
           if(Auth::attempt($credentials)){
-             $user = Auth::user();
-             $token = $user->createToken('token-api') ;
-             return response()->json([
-                "message" => "login successfuly",
-                "token" => $token->plainTextToken
-             ]);
+                $user = Auth::user();
+                $token = $user->createToken('token-api') ;
+                return response()->json([
+                    "message" => "login successfuly",
+                    "token" => $token->plainTextToken
+                ]);
           }else{
              return response()->json([
                 "message" => "Account not found"
@@ -69,6 +59,14 @@ class AuthController extends Controller
     *      path="/register",
     *      summary="Register",
     *      description="Register a new user",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\JsonContent(
+    *              @OA\Property(property="name", type="string"),
+    *              @OA\Property(property="email", type="string"),
+    *              @OA\Property(property="password", type="string"),
+    *          )
+    *      ),
     *      tags={"Auth"},
     *      @OA\Response(response="200", description="User registered successfully"),
     *      @OA\Response(response="422", description="Validation errors")

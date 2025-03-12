@@ -21,10 +21,11 @@ Route::post('/login' , [AuthController::class , 'signin'])->name("login");
 Route::post('/register' , [AuthController::class , 'register'])->name("register");
 
 Route::middleware('auth:sanctum')->group(function(){
-    
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::apiResource('offers', OfferController::class);
-    
+    Route::apiResource('user', OfferController::class);
+
 });
