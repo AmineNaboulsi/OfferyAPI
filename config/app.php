@@ -168,6 +168,12 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        //
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        //
+        App\Providers\NetworkInfoServiceProvider::class,
+        //
+        Stevebauman\Location\LocationServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -182,7 +188,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        'location' => Stevebauman\Location\Facades\Location::class,
     ])->toArray(),
 
 ];

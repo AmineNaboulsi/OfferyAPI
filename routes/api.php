@@ -18,13 +18,26 @@ use App\Http\Controllers\OfferController;
 
 
 Route::post('/login' , [AuthController::class , 'signin'])->name("login");
+Route::get('/login' , function(){
+    return "Login";
+});
 Route::post('/register' , [AuthController::class , 'register'])->name("register");
 
-Route::middleware('auth:sanctum')->group(function(){
-    
-    Route::get('/user', function (Request $request) {
+// Route::middleware('auth:sanctum')->group(function(){
+
+//     Route::get('/user', function (Request $request) {
+//         return $request->user();
+//     });
+//     Route::apiResource('offers', OfferController::class);
+
+// });
+
+Route::group([
+    'middleware' => 'auth:api',
+], function ($router) {
+    Route::post('/user', function (Request $request) {
         return $request->user();
     });
-    Route::apiResource('offers', OfferController::class);
-    
+    Route::post('/upload', [AuthController::class, 'upload']);
 });
+
