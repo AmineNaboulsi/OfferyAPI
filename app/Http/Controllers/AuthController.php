@@ -47,7 +47,7 @@ class AuthController extends Controller
           ]);
 
           if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json(['message' => 'Account not found'], 401);
           }else{
             return response()->json([
                 'access_token' => $token,
@@ -153,37 +153,7 @@ class AuthController extends Controller
             return 'other';
         }
     }
-    public function upload(Request $request){
-        try {
-            $request->validate([
-                'file' => 'required|file|mimes:pdf',
-            ]);
 
-            // Get user ID from JWT token
-            $userId = auth()->id(); // or auth()->user()->id
-
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            // You can use the user ID in the path if needed
-            $path = $file->storeAs('files/' . $userId, $fileName);
-
-            $fileUri = url('storage/' . $path);
-            User::where('id', $userId)->update([
-                "cv_path" => $fileName
-            ]);
-
-            return response()->json([
-                'message' => 'File uploaded successfully',
-                'fileName' => $fileName,
-                'fileUri' => $fileUri,
-                'userId' => $userId
-            ]);
-        } catch(\Exception $e) {
-            return response()->json([
-                'message' =>  $e->getMessage()
-            ], 422);
-        }
-    }
 
     private function getDeviceType($userAgent)
     {

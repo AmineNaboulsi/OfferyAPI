@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('job_type', ['full-time', 'part-time', 'contract', 'freelance', 'internship']);
             $table->date('deadline')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name')->nullable();
             $table->timestamps();
         });
     }

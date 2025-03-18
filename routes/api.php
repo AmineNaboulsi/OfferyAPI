@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CompetencesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,14 +25,7 @@ Route::get('/login' , function(){
 });
 Route::post('/register' , [AuthController::class , 'register'])->name("register");
 
-// Route::middleware('auth:sanctum')->group(function(){
-
-//     Route::get('/user', function (Request $request) {
-//         return $request->user();
-//     });
-//     Route::apiResource('offers', OfferController::class);
-
-// });
+//Route::apiResource('offers', OfferController::class);
 
 Route::group([
     'middleware' => 'auth:api',
@@ -38,6 +33,8 @@ Route::group([
     Route::post('/user', function (Request $request) {
         return $request->user();
     });
-    Route::post('/upload', [AuthController::class, 'upload']);
+    Route::post('/upload', [UserController::class, 'upload']);
+    Route::post('/postule', [UserController::class, 'postule']);
+    Route::apiResource('competences', CompetencesController::class);
 });
 

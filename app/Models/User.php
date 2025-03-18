@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Offre;
+use App\Models\Competences;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -18,7 +20,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Offre::class);
     }
 
-
+    public function Competences()
+    {
+        return $this->belongsToMany(Competences::class, 'usercompetence');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
