@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompetencesController;
+use App\Http\Controllers\UserCompetences;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,15 +28,21 @@ Route::get('/login' , function(){
 Route::post('/register' , [AuthController::class , 'register'])->name("register");
 
 //Route::apiResource('offers', OfferController::class);
-
+Route::get('/users', function (Request $request) {
+    return User::all();
+});
 Route::group([
     'middleware' => 'auth:api',
 ], function ($router) {
     Route::post('/user', function (Request $request) {
-        return $request->user();
+        return response()->json([
+            auth()->user()->with('competences')->get() ,
+        ]);
     });
+
     Route::post('/upload', [UserController::class, 'upload']);
     Route::post('/postule', [UserController::class, 'postule']);
     Route::apiResource('competences', CompetencesController::class);
+    Route::post('/addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
 });
 

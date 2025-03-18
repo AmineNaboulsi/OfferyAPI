@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Moldes\User;
 class Competences extends Model
 {
     use HasFactory;
@@ -16,4 +16,9 @@ class Competences extends Model
         'level',
         'user_id',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'usercompetence', 'competence_id', 'user_id');
+    }
 }

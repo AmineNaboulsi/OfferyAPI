@@ -20,9 +20,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Offre::class);
     }
 
-    public function Competences()
+    public function competences()
     {
-        return $this->belongsToMany(Competences::class, 'usercompetence');
+        return $this->belongsToMany(Competences::class, 'usercompetence', 'user_id', 'competence_id');
     }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
