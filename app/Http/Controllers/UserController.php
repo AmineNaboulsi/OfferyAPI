@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use App\Http\Requests\UserRoleEffectation;
 class UserController extends Controller
 {
      /**
@@ -80,4 +80,33 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/affect-role",
+     *      summary="Affect role to user",
+     *      description="Assign a role to a user",
+     *      tags={"User"},
+     *      @OA\Response(response="200", description="Role assigned successfully"),
+     *      @OA\Response(response="422", description="Validation error")
+     * )
+     */
+    public function affectrole(UserRoleEffectation $request)  {
+        try {
+
+            $user = auth('api')->user();
+            $roleId = $request->role_id;
+            $user->role_id = $roleId;
+            $user->save();
+
+            return response()->json([
+                'message' => 'Role assigned successfully',
+                'user' => $user
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
 }

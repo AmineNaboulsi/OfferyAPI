@@ -7,9 +7,6 @@ use Illuminate\Database\Seeder;
 
 class OfferSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Offer::factory(10)->create();

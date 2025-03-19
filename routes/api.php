@@ -7,6 +7,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompetencesController;
 use App\Http\Controllers\UserCompetences;
+use App\Http\Controllers\RoleController;
 use App\Models\User;
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,6 @@ Route::get('/login' , function(){
 });
 Route::post('/register' , [AuthController::class , 'register'])->name("register");
 
-//Route::apiResource('offers', OfferController::class);
 Route::get('/users', function (Request $request) {
     return User::all();
 });
@@ -42,7 +42,11 @@ Route::group([
 
     Route::post('/upload', [UserController::class, 'upload']);
     Route::post('/postule', [UserController::class, 'postule']);
+    Route::post('/user/role', [UserController::class, 'affectrole']);
     Route::apiResource('competences', CompetencesController::class);
-    Route::post('/addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
+    Route::post('addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
+    Route::apiResource('offers', OfferController::class);
+
 });
 
+Route::apiResource('roles', RoleController::class);

@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Offre;
 use App\Models\Competences;
-
+use App\Models\Role;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -18,6 +18,11 @@ class User extends Authenticatable implements JWTSubject
     public function offres()
     {
         return $this->hasMany(Offre::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 
     public function competences()
