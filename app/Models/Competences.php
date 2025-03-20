@@ -14,7 +14,6 @@ class Competences extends Model
         'description',
         'type',
         'level',
-        'user_id',
     ];
 
     public function users()

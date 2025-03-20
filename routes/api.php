@@ -23,6 +23,7 @@ use App\Models\User;
 
 
 Route::post('/login' , [AuthController::class , 'signin'])->name("login");
+Route::post('/refresh' , [AuthController::class , 'refresh'])->name("refresh");
 Route::get('/login' , function(){
     return "Login";
 });
@@ -46,7 +47,7 @@ Route::group([
     Route::apiResource('competences', CompetencesController::class);
     Route::post('addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
     Route::apiResource('offers', OfferController::class);
+    Route::apiResource('roles', RoleController::class);
 
 });
 
-Route::apiResource('roles', RoleController::class);

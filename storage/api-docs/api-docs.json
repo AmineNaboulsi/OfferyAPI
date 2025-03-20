@@ -5,14 +5,38 @@
         "version": "0.1"
     },
     "paths": {
-        "/login": {
+        "/api/login": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "SignIn",
                 "description": "SignIn",
-                "operationId": "7d193e3488af5b704a1a5532bac21eee",
+                "operationId": "c2a849db726874bed2c89d5c15eaadf5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "login successfuly"
@@ -23,14 +47,42 @@
                 }
             }
         },
-        "/register": {
+        "/api/register": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Register",
                 "description": "Register a new user",
-                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "User registered successfully"
@@ -40,12 +92,175 @@
                     }
                 }
             }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh Token",
+                "description": "Refresh JWT token",
+                "operationId": "2c27d311a2876560fcb5a754b556cdc5",
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/offers": {
+            "get": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Offres",
+                "description": "get all offres",
+                "operationId": "3a56496f000faffd87f42c4036770f0e",
+                "responses": {
+                    "200": {
+                        "description": "get all offres"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "No offers found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Offer"
+                ],
+                "summary": "Offres",
+                "description": "get all offres",
+                "operationId": "4b4cc5dac461b7ed0b8d56a8a2ce22d2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "location",
+                                    "company_name",
+                                    "salary",
+                                    "job_type",
+                                    "deadline",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "company_name": {
+                                        "type": "string"
+                                    },
+                                    "salary": {
+                                        "type": "number"
+                                    },
+                                    "job_type": {
+                                        "type": "string",
+                                        "default": "full-time"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "add offres"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/upload": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Upload cv to profile",
+                "description": "Upload cv to profile",
+                "operationId": "86b9af831683fa1b62495690a89c3589",
+                "responses": {
+                    "201": {
+                        "description": "File uploaded successfully"
+                    },
+                    "422": {
+                        "description": "Fiel required"
+                    }
+                }
+            }
+        },
+        "/api/affect-role": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Affect role to user",
+                "description": "Assign a role to a user",
+                "operationId": "cd9365e4901ccd3defc1aa009531b374",
+                "responses": {
+                    "200": {
+                        "description": "Role assigned successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Offer",
+            "description": "Offer"
+        },
+        {
+            "name": "User",
+            "description": "User"
         }
     ]
 }
