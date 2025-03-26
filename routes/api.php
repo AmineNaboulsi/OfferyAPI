@@ -35,7 +35,7 @@ Route::get('/users', function (Request $request) {
 Route::group([
     'middleware' => 'auth',
 ], function ($router) {
-    Route::post('/user', function (Request $request) {
+    Route::get('/user', function (Request $request) {
         return response()->json([
             auth()->user()->with('competences')->get() ,
         ]);
@@ -44,8 +44,8 @@ Route::group([
     Route::post('/upload', [UserController::class, 'upload']);
     Route::post('/postule', [UserController::class, 'postule']);
     Route::post('/user/role', [UserController::class, 'affectrole']);
-    Route::apiResource('competences', CompetencesController::class);
     Route::post('addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
+    Route::apiResource('competences', CompetencesController::class);
     Route::apiResource('offers', OfferController::class);
     Route::apiResource('roles', RoleController::class);
 

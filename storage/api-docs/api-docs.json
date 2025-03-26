@@ -203,6 +203,58 @@
                 ]
             }
         },
+        "/api/users/{user}/competences": {
+            "post": {
+                "tags": [
+                    "User Competences"
+                ],
+                "summary": "Add competences to a user",
+                "description": "Attaches one or more competences to a user",
+                "operationId": "9122a5a60b42721d447cfc0c8e30be02",
+                "requestBody": {
+                    "description": "Competences to attach to user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "competences"
+                                ],
+                                "properties": {
+                                    "competences": {
+                                        "description": "Array of competence objects",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "id"
+                                            ],
+                                            "properties": {
+                                                "id": {
+                                                    "description": "Competence ID",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "add offres"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/upload": {
             "post": {
                 "tags": [
@@ -257,6 +309,10 @@
         {
             "name": "Offer",
             "description": "Offer"
+        },
+        {
+            "name": "User Competences",
+            "description": "User Competences"
         },
         {
             "name": "User",
