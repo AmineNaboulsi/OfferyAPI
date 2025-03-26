@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompetencesController;
 use App\Http\Controllers\UserCompetences;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserCompetencesController;
 use App\Models\User;
 /*
 |--------------------------------------------------------------------------
@@ -32,25 +33,24 @@ Route::post('/register' , [AuthController::class , 'register'])->name("register"
 Route::get('/users', function (Request $request) {
     return User::all();
 });
+Route::get('/user', function () {
+    return response()->json([
+        User::with('competences')->get()
+    ]);
+});
 Route::group([
     'middleware' => 'auth',
 ], function ($router) {
-    Route::get('/user', function (Request $request) {
-        return response()->json([
-            auth()->user()->with('competences')->get() ,
-        ]);
-    });
 
     Route::post('/upload', [UserController::class, 'upload']);
     Route::post('/postule', [UserController::class, 'postule']);
     Route::post('/user/role', [UserController::class, 'affectrole']);
-    Route::post('addCompetence/{user:id}', [UserCompetences::class, 'AddCompetence']);
     Route::apiResource('competences', CompetencesController::class);
     Route::apiResource('offers', OfferController::class);
     Route::apiResource('roles', RoleController::class);
-
+    
     Route::get('/test' , function(){
         return "test";
     })->can('VerifyrefreshToken' , User::class);
+    Route::apiResource('users.competences', UserCompetencesController::class);
 });
-

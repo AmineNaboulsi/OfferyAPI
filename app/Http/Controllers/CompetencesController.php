@@ -72,9 +72,6 @@ class CompetencesController extends Controller
     public function update(UpdateCompetencesRequest $request, Competences $competence)
     {
         try{
-
-            $this->authorize('update', $competence);
-
             $validated = $request->validate([
                 "name" => "required|string|unique:competences,name",
                 "description" => "required|string",
@@ -103,8 +100,6 @@ class CompetencesController extends Controller
      */
     public function destroy(Competences $competence)
     {
-        $this->authorize('delete', $competence);
-
         $competence->delete();
 
         return response()->json([
