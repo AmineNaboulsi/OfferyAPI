@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use OpenApi\Annotations as OA;
 use \Tymon\JWTAuth\Facades\JWTAuth;
+
+
 class AuthController extends Controller
 {
     // public function __construct(){
@@ -31,27 +33,27 @@ class AuthController extends Controller
     *      @OA\Response(response="404", description="Account not found"),
     * )
     */
-    public function signin(Request $request){
+    public function signin(Request $Request){
        try{
-          $credentials = $request->validate([
-             "email" => ['required', 'email', 'string'],
-             "password" => ['required', 'string']
+          $credentials = $Request->validate([
+             "email" => ['required' , 'email' ,'string' ] ,
+             "password" => ['required' , 'string']
           ]);
 
-          if (!$token = JWTAuth::attempt($credentials)) {
+        if (! $token = auth()->attempt($credentials)) {
             return response()->json(['message' => 'Account not found'], 401);
-           }
-
-            $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser(auth()->user());
-
+          }else{
+            JWTAuth::setToken($token);
+            $refreshtoken = JWTAuth::claims(["type" => "refresh"])->fromUser(auth()->user());
             return response()->json([
                 'access_token' => $token,
-                'refresh_token' => $refreshToken,
+                'refresh_token' => $refreshtoken
             ]);
-       } catch(\Exception $e){
+         }
+       }catch(\Exception $e){
           return response()->json([
              "message" => $e->getMessage()
-          ], 500);
+          ]);
        }
     }
 
@@ -76,30 +78,29 @@ class AuthController extends Controller
     */
     public function register(Request $request){
        try{
-            $validatedData = $request->validate([
-                "name" => ['required', 'string', 'max:255'],
-                "email" => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                "password" => ['required', 'string', 'min:8'],
-            ]);
-            $user = User::create([
-                    'name' => $validatedData['name'],
-                    'email' => $validatedData['email'],
-                    'password' => bcrypt($validatedData['password']),
-                    'ip_address' => request()->ip(),
-                    'mac_address' => $this->getMacAddress(),
-                    'user_agent' => request()->header('User-Agent'),
-                    'device_type' => $this->getDeviceType(request()->header('User-Agent'))
-            ]);
+          $validatedData = $request->validate([
+             "name" => ['required', 'string', 'max:255'],
+             "email" => ['required', 'string', 'email', 'max:255', 'unique:users'],
+             "password" => ['required', 'string', 'min:8'],
+          ]);
+          $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => bcrypt($validatedData['password']),
+                'ip_address' => request()->ip(),
+                'mac_address' => $this->getMacAddress(),
+                'user_agent' => request()->header('User-Agent'),
+                'device_type' => $this->getDeviceType(request()->header('User-Agent'))
+          ]);
 
-            $token = JWTAuth::fromUser($user);
-            $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($user);
+          $token = auth()->login($user);
 
-            return response()->json([
-                "message" => "User registered successfully",
-                "access_token" => $token,
-                "refresh_token" => $refreshToken,
-                "user" => $user
-            ], 201);
+          return response()->json([
+             "message" => "User registered successfully",
+             "token" => $token,
+             "refresh_token" => auth()->refresh(true),
+             "user" => $user
+        ], 201);
 
        }catch(\Exception $e){
           return response()->json([
@@ -126,47 +127,43 @@ class AuthController extends Controller
                     'message' => 'Refresh token not provided'
                 ], 401);
             }
-
-            JWTAuth::setToken($refreshToken);
-            $payload = JWTAuth::getPayload();
-
+            JWTAuth::setToken();
+            auth()->setToken($refreshToken);
+            $payload = auth()->payload();
+            return $payload;
             if (!isset($payload['type']) || $payload['type'] !== 'refresh') {
                 return response()->json([
-                    'message' => 'Invalid token type'
+                    'message' => 'Invalid refresh token'
                 ], 401);
             }
+            $newToken = auth()->refresh();
 
-            $user = JWTAuth::authenticate();
+            $user = $payload['sub'];
+            $user = User::find($user);
             if (!$user) {
                 return response()->json([
                     'message' => 'User not found'
                 ], 401);
             }
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found after refresh'
+                ], 401);
+            }
 
-            $newToken = JWTAuth::fromUser($user);
-            $newRefreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($user);
+            $newRefreshToken = JWTAuth::claims(["type" => "refresh"])->fromUser($user);
 
             return response()->json([
                 'access_token' => $newToken,
-                'refresh_token' => $newRefreshToken,
+                'refresh_token' => $newRefreshToken
             ]);
-
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return response()->json([
-                'message' => 'Refresh token has expired'
-            ], 401);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return response()->json([
-                'message' => 'Refresh token is invalid'
-            ], 401);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Could not refresh token',
-                'error' => $e->getMessage()
-            ], 500);
+                'message' => 'Unauthorized',
+                'error' => 'Invalid or expired refresh token: ' . $e->getMessage()
+            ], 401);
         }
     }
-
     public function getMacAddress()
     {
         $ipAddress = request()->ip();

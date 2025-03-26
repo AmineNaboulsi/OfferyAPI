@@ -33,7 +33,7 @@ Route::get('/users', function (Request $request) {
     return User::all();
 });
 Route::group([
-    'middleware' => 'auth:api',
+    'middleware' => 'auth',
 ], function ($router) {
     Route::post('/user', function (Request $request) {
         return response()->json([
@@ -49,5 +49,8 @@ Route::group([
     Route::apiResource('offers', OfferController::class);
     Route::apiResource('roles', RoleController::class);
 
+    Route::get('/test' , function(){
+        return "test";
+    })->can('VerifyrefreshToken' , User::class);
 });
 
